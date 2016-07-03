@@ -18,18 +18,20 @@ int main(int argc, char *argv[])
     image.load("C:\\Users\\AC_Phoenix\\Desktop\\arborgreens\\medianFilterSrc.jpg");
     ImageHandler::scaled(image);
     ImageHandler::medianFilter(image);
+    //ImageHandler::gaussianSmoothing(image);
     image.save("C:\\Users\\AC_Phoenix\\Desktop\\arborgreens\\medianFilterRes.jpg");
 
 /*
-    for (int y = 0; y < image3.height(); ++y)
-    {
-        for (int x = 0; x < image3.width(); ++x)
-        {
-            QRgb rgb = image1.pixel(x, y);
-            image3.setPixel(x, y, rgb);
-        }
-    }
-*/
+    QColor colorRgb(10, 10, 10);
+    QColor colorHsl = colorRgb.toHsl();
+    std::cout << "Hue = " << colorHsl.hslHue()
+              << " Saturation = " << colorHsl.hslSaturation()
+              << " Lightness = " << colorHsl.lightness() << std::endl << std::endl;
 
+    colorRgb = colorHsl.toRgb();
+    std::cout << "Red = " << colorHsl.red()
+              << " Green = " << colorHsl.green()
+              << " Blue = " << colorHsl.blue() << std::endl;
+*/
     return a.exec();
 }

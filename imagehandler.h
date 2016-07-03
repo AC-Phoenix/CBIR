@@ -6,6 +6,8 @@
 #include <QRgb>
 #include <QColor>
 
+const int COLOR_DIMENSIONS = 3;
+
 class ImageHandler
 {
 public:
@@ -23,7 +25,11 @@ public:
         image = image.scaled(size);
     }
 
+    // 中值滤波
     static void medianFilter(QImage &image, int D = 3);
+
+    // 高斯平滑
+    static void gaussianSmoothing(QImage &image);
 
 private:
     static QSize size;
