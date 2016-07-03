@@ -1,5 +1,0 @@
-# CBIR
-
-# CBIR
-
-# CBIR
