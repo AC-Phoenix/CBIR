@@ -16,7 +16,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    imagehandler.cpp
+    imagehandler.cpp \
+    histogrambase.cpp \
+    histogramrgb.cpp
 
 HEADERS += \
-    imagehandler.h
+    imagehandler.h \
+    histogrambase.h \
+    histogramrgb.h

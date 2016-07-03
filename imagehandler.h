@@ -6,6 +6,8 @@
 #include <QRgb>
 #include <QColor>
 
+const int COLOR_DIMENSIONS = 3;
+
 class ImageHandler
 {
 public:
@@ -28,6 +30,7 @@ public:
 
     // 高斯平滑
     static void gaussianSmoothing(QImage &image);
+
 private:
     static QSize size;
 };
