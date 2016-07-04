@@ -156,3 +156,20 @@ void ImageHandler::histogramEqualization(QImage &image)
         }
     }
 }
+
+// 图像灰度化Gray=0.30*R+0.59*G+0.11*B
+void ImageHandler::toGray(QImage &image)
+{
+    int height = image.height();
+    int width  = image.width();
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            QColor color = image.pixel(x, y);
+            int gray = color.red()*0.3 + color.green()*0.59 + color.blue()*0.11;
+            QRgb rgb = qRgb(gray, gray, gray);
+            image.setPixel(x, y, rgb);
+        }
+    }
+}

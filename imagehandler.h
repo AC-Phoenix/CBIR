@@ -40,6 +40,9 @@ public:
 
     // 直方图均衡化
     static void histogramEqualization(QImage &image);
+
+    // 图像灰度化Gray=0.30*R+0.59*G+0.11*B
+    static void toGray(QImage &image);
 private:
     // 保存图像的统一大小
     static QSize size;

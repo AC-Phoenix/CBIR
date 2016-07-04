@@ -18,9 +18,12 @@ TEMPLATE = app
 SOURCES += main.cpp \
     imagehandler.cpp \
     histogrambase.cpp \
-    histogramrgb.cpp
+    histogramrgb.cpp \
+    calculatefeature.cpp
 
 HEADERS += \
     imagehandler.h \
     histogrambase.h \
-    histogramrgb.h
+    histogramrgb.h \
+    calculatefeature.h \
+    calculationrsp.h
