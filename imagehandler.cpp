@@ -1,4 +1,5 @@
 #include "imagehandler.h"
+#include "histogramrgb.h"
 #include <algorithm>
 #include <iostream>
 
@@ -45,10 +46,10 @@ void ImageHandler::medianFilter(QImage &image, int D)
             {
                 for (int dx = start; dx <= end; ++dx)
                 {
-                    QColor color = image.pixel(x+dx, y+dy);
-                    arr[0][tot] = color.red();
-                    arr[1][tot] = color.green();
-                    arr[2][tot] = color.blue();
+                    QColor color    = image.pixel(x+dx, y+dy);
+                    arr[RED][tot]   = color.red();
+                    arr[GREEN][tot] = color.green();
+                    arr[BLUE][tot]  = color.blue();
                     ++tot;
                 }
             }
@@ -58,7 +59,7 @@ void ImageHandler::medianFilter(QImage &image, int D)
             {
                 std::nth_element(arr[i], arr[i] + (tot>>1), arr[i]+tot);
             }
-            QRgb rgb = qRgb(arr[0][tot>>1], arr[1][tot>>1], arr[2][tot>>1]);
+            QRgb rgb = qRgb(arr[RED][tot>>1], arr[GREEN][tot>>1], arr[BLUE][tot>>1]);
             tmp.setPixel(x, y, rgb);
         }
     }
@@ -124,4 +125,34 @@ void ImageHandler::gaussianSmoothing(QImage &image)
         }
     }
     image = tmp;
+}
+
+// 直方图均衡化
+void ImageHandler::histogramEqualization(QImage &image)
+{
+    HistogramRGB histogramRGB;
+    histogramRGB.readImage(image);
+
+    int equalizationRes[COLOR_DIMENSIONS][HISTOGRAM_DIMENSIONS] = {0};
+    int height = image.height();
+    int width  = image.width();
+    histogramRGB.equalization(equalizationRes, height * width);
+
+
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            QColor color   = image.pixel(x, y);
+            int redLevel   = color.red();
+            int greenLevel = color.green();
+            int blueLevel  = color.blue();
+            redLevel   = equalizationRes[RED][redLevel];
+            greenLevel = equalizationRes[GREEN][greenLevel];
+            blueLevel  = equalizationRes[BLUE][blueLevel];
+
+            QRgb rgb = qRgb(redLevel, greenLevel, blueLevel);
+            image.setPixel(x, y, rgb);
+        }
+    }
 }

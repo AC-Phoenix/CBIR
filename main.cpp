@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     ImageHandler::scaled(image);
     ImageHandler::medianFilter(image);
     //ImageHandler::gaussianSmoothing(image);
-    image.save("C:\\Users\\AC_Phoenix\\Desktop\\arborgreens\\medianFilterRes.jpg");
+    ImageHandler::histogramEqualization(image);
+    image.save("C:\\Users\\AC_Phoenix\\Desktop\\arborgreens\\medianFilter_equalization_Res.jpg");
 
 /*
     QColor colorRgb(10, 10, 10);

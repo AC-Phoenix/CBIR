@@ -8,6 +8,13 @@
 
 const int COLOR_DIMENSIONS = 3;
 
+enum RGB
+{
+    RED = 0,
+    GREEN = 1,
+    BLUE = 2,
+};
+
 class ImageHandler
 {
 public:
@@ -31,7 +38,10 @@ public:
     // 高斯平滑
     static void gaussianSmoothing(QImage &image);
 
+    // 直方图均衡化
+    static void histogramEqualization(QImage &image);
 private:
+    // 保存图像的统一大小
     static QSize size;
 };
 
