@@ -173,3 +173,169 @@ void ImageHandler::toGray(QImage &image)
         }
     }
 }
+
+// 将位图，微分算子，以及微分算子对应矩阵的阶 当做参数，实现图像的锐化
+void ImageHandler::sharpening(QImage &image, int H[3][3], int D)
+{
+    int *tmp;
+    int height, width, step;
+    height = image.height();
+    width  = image.width();
+    step   = width*3;
+
+    tmp = (int*) malloc(sizeof(int)*height*width*3);
+    memset(tmp, 0, sizeof(int)*height*width*3);
+    switch(D)
+    {
+    case 2:
+        for (int i = 0; i < height-1; ++i) {
+            for (int j = 0; j < width-1; ++j) {
+                for (int _i = 0; _i < D; ++_i) {
+                    for (int _j = 0; _j < D; ++_j) {
+                        QColor color = image.pixel(j+_j, i+_i);
+                        int redLevel   = color.red();
+                        int greenLevel = color.green();
+                        int blueLevel  = color.blue();
+
+                        tmp[i*step + j*3 + 0] += redLevel * H[_i][_j];
+                        tmp[i*step + j*3 + 1] += greenLevel * H[_i][_j];
+                        tmp[i*step + j*3 + 2] += blueLevel * H[_i][_j];
+                    }
+                }
+
+            }
+        }
+        for (int i = 0; i < height-1; ++i) {
+            for (int j = 0; j < width-1; ++j) {
+                int redLevel   = tmp[i*step + j*3 + 0];
+                int greenLevel = tmp[i*step + j*3 + 1];
+                int blueLevel  = tmp[i*step + j*3 + 2];
+
+                QRgb rgb = qRgb(redLevel, greenLevel, blueLevel);
+                image.setPixel(j, i, rgb);
+
+            }
+        }
+        break;
+    case 3:
+        for (int i = 1; i < height-1; ++i) {
+            for (int j = 1; j < width-1; ++j) {
+                for (int _i = 0; _i < D; ++_i) {
+                    for (int _j = 0; _j < D; ++_j) {
+                        QColor color = image.pixel(j+_j-1, i+_i-1);
+                        int redLevel   = color.red();
+                        int greenLevel = color.green();
+                        int blueLevel  = color.blue();
+
+                        tmp[i*step + j*3 + 0] += redLevel * H[_i][_j];
+                        tmp[i*step + j*3 + 1] += greenLevel * H[_i][_j];
+                        tmp[i*step + j*3 + 2] += blueLevel * H[_i][_j];
+                    }
+                }
+
+            }
+        }
+        for (int i = 1; i < height-1; ++i) {
+            for (int j = 1; j < width-1; ++j) {
+                int redLevel   = tmp[i*step + j*3 + 0];
+                int greenLevel = tmp[i*step + j*3 + 1];
+                int blueLevel  = tmp[i*step + j*3 + 2];
+
+                QRgb rgb = qRgb(redLevel, greenLevel, blueLevel);
+                image.setPixel(j, i, rgb);
+
+            }
+        }
+        break;
+    }
+    free(tmp);
+}
+
+// 根据otsu算法原理确定阈值大小
+int ImageHandler::findOtsuThreshold(QImage &image)
+{
+    if (false == image.allGray())
+    {
+        return -1;
+    }
+    int cnt_PixelValue[256];
+    int height, width;
+    height = image.height(), width = image.width();
+    long long pixelValueSum, pixelCntSum;
+    pixelValueSum = 0, pixelCntSum = height*width;
+
+    memset(cnt_PixelValue, 0, sizeof(cnt_PixelValue));
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            QColor color = image.pixel(x, y);
+            int grayLevel = color.red();
+            ++cnt_PixelValue[grayLevel];
+            pixelValueSum += grayLevel;
+        }
+    }
+    long long cntSum1 = 0, cntSum2;
+    long long valSum1 = 0, valSum2;
+    double maxVariance = -1, nowVariance;
+    double meanVal1, meanVal2;
+    int ret = -1;
+
+    for (int i = 0; i <= 255; ++i)
+    {
+        cntSum1 += cnt_PixelValue[i];
+        if (0 == cntSum1)
+        {
+            continue;
+        }
+        cntSum2 = pixelCntSum - cntSum1;
+        if (0 == cntSum2)
+        {
+            break;
+        }
+
+        valSum1 += (long long)i * cnt_PixelValue[i];
+        valSum2 = pixelValueSum - valSum1;
+
+        meanVal1 = (double)valSum1 / cntSum1;
+        meanVal2 = (double)valSum2 / cntSum2;
+        nowVariance = cntSum1*cntSum2*(meanVal1 - meanVal2)*(meanVal1 - meanVal2);
+        if (maxVariance < nowVariance)
+        {
+            maxVariance = nowVariance;
+            ret = i;
+        }
+    }
+    return ret;
+}
+
+// 使用otsu算法实现图像分割
+void ImageHandler::otsu(QImage &image)
+{
+    int threshold;
+    int height, width;
+    height = image.height(), width = image.width();
+    if ((threshold = findOtsuThreshold(image)) == -1)
+    {
+        std::cerr << "findOtsuThreshold error." << std::endl;
+    }
+    std::cout << "threshold == " << threshold << std::endl;
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            QColor color = image.pixel(x, y);
+            int grayLevel = color.red();
+            if (grayLevel > threshold)
+            {
+                grayLevel = 255;
+            }
+            else
+            {
+                grayLevel = 0;
+            }
+            QRgb rgb = qRgb(grayLevel, grayLevel, grayLevel);
+            image.setPixel(x, y, rgb);
+        }
+    }
+}

@@ -43,6 +43,15 @@ public:
 
     // 图像灰度化Gray=0.30*R+0.59*G+0.11*B
     static void toGray(QImage &image);
+
+    // 将位图，微分算子，以及微分算子对应矩阵的阶 当做参数，实现图像的锐化
+    static void sharpening(QImage &image, int H[3][3], int D);
+
+    // 根据otsu算法原理确定阈值大小
+    static int findOtsuThreshold(QImage &image);
+
+    // 使用otsu算法实现图像分割
+    static void otsu(QImage &image);
 private:
     // 保存图像的统一大小
     static QSize size;

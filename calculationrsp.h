@@ -14,7 +14,7 @@ struct ColorFeatureRsp
     double LM3;
 };
 
-struct ShapeFeatureRsp
+struct TextureFeatureRsp
 {
     // 熵
     double entropyE;
@@ -31,6 +31,18 @@ struct ShapeFeatureRsp
     // 自相关性
     double correlationE;
     double correlationSD;
+};
+
+struct ShapeFeature
+{
+    double M[7];
+    double Eccentricity;
+};
+
+struct ShapeFeatureRsp
+{
+    ShapeFeature Xdirection;
+    ShapeFeature Ydirection;
 };
 
 #endif // CALCULATIONRSP
