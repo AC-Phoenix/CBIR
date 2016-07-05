@@ -14,5 +14,24 @@ struct ColorFeatureRsp
     double LM3;
 };
 
+struct ShapeFeatureRsp
+{
+    // 熵
+    double entropyE;
+    double entropySD;
+    // 能量
+    double energyE;
+    double energySD;
+    // 对比度
+    double contrastE;
+    double contrastSD;
+    // 逆差矩
+    double IDME;
+    double IDMSD;
+    // 自相关性
+    double correlationE;
+    double correlationSD;
+};
+
 #endif // CALCULATIONRSP
 

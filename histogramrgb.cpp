@@ -3,7 +3,7 @@
 
 HistogramRGB::HistogramRGB()
 {
-    memset(data, 0, sizeof(data));
+
 }
 
 HistogramRGB::~HistogramRGB()

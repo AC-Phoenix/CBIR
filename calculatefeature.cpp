@@ -6,6 +6,7 @@
 #include <QSize>
 #include <cmath>
 #include "imagehandler.h"
+#include "glcm.h"
 
 CalculateFeature::CalculateFeature()
 {
@@ -77,4 +78,67 @@ void CalculateFeature::calColorFeature(const char *path, ColorFeatureRsp &rsp)
     rsp.HM3 *= Hsign;
     rsp.SM3 *= Ssign;
     rsp.LM3 *= Lsign;
+}
+
+void CalculateFeature::calShapeFeature(const char *path, ShapeFeatureRsp &rsp)
+{
+    QImage image;
+    image.load(path);
+    ImageHandler::scaled(image);
+    ImageHandler::medianFilter(image);
+    ImageHandler::histogramEqualization(image);
+    ImageHandler::toGray(image);
+
+    int dx[] = {1, 1, 0, -1};
+    int dy[] = {0, 1, 1, 1};
+    const int N = 4;
+
+    // 熵
+    rsp.entropyE  = 0;
+    rsp.entropySD = 0;
+    // 能量
+    rsp.energyE  = 0;
+    rsp.energySD = 0;
+    // 对比度
+    rsp.contrastE  = 0;
+    rsp.contrastSD = 0;
+    // 逆差矩
+    rsp.IDME  = 0;
+    rsp.IDMSD = 0;
+    // 自相关性
+    rsp.correlationE  = 0;
+    rsp.correlationSD = 0;
+
+    GLCM glcm[N];
+    GLCMFeature res[N];
+    for (int i = 0; i < N; ++i)
+    {
+        glcm[i].readImage(image, dx[i], dy[i]);
+        glcm[i].calFeature(res[i]);
+        rsp.entropyE     += res[i].entropy;
+        rsp.energyE      += res[i].energy;
+        rsp.contrastE    += res[i].contrast;
+        rsp.IDME         += res[i].IDM;
+        rsp.correlationE += res[i].correlation;
+    }
+    rsp.entropyE     /= N;
+    rsp.energyE      /= N;
+    rsp.contrastE    /= N;
+    rsp.IDME         /= N;
+    rsp.correlationE /= N;
+
+    for (int i = 0; i < N; ++i)
+    {
+        rsp.entropySD     += (res[i].entropy-rsp.entropyE) * (res[i].entropy-rsp.entropyE);
+        rsp.energySD      += (res[i].energy-rsp.energyE) * (res[i].energy-rsp.energyE);
+        rsp.contrastSD    += (res[i].contrast-rsp.contrastE) * (res[i].contrast-rsp.contrastE);
+        rsp.IDMSD         += (res[i].IDM-rsp.IDME) * (res[i].IDM-rsp.IDME);
+        rsp.correlationSD += (res[i].correlation-rsp.correlationE) * (res[i].correlation-rsp.correlationE);
+    }
+    rsp.entropySD     = sqrt(rsp.entropySD/N);
+    rsp.energySD      = sqrt(rsp.energySD/N);
+    rsp.contrastSD    = sqrt(rsp.contrastSD/N);
+    rsp.IDMSD         = sqrt(rsp.IDMSD/N);
+    rsp.correlationSD = sqrt(rsp.correlationSD/N);
+
 }

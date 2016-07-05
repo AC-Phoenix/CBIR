@@ -19,11 +19,13 @@ SOURCES += main.cpp \
     imagehandler.cpp \
     histogrambase.cpp \
     histogramrgb.cpp \
-    calculatefeature.cpp
+    calculatefeature.cpp \
+    glcm.cpp
 
 HEADERS += \
     imagehandler.h \
     histogrambase.h \
     histogramrgb.h \
     calculatefeature.h \
-    calculationrsp.h
+    calculationrsp.h \
+    glcm.h

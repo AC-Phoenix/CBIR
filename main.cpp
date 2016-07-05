@@ -14,6 +14,28 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     ImageHandler::init();
+    for (int i = 1; i <= 47; ++i)
+    {
+        printf("Image%02d.jpg:\n", i);
+        sprintf(path, "%sImage%02d.jpg", prefix, i);
+        ShapeFeatureRsp rsp;
+        CalculateFeature::calShapeFeature(path, rsp);
+
+        std::cout << "rsp.entropyE = "  << rsp.entropyE  << std::endl;
+        std::cout << "rsp.entropySD = " << rsp.entropySD << std::endl;
+        std::cout << "rsp.energyE = "  << rsp.energyE  << std::endl;
+        std::cout << "rsp.energySD = " << rsp.energySD << std::endl;
+        std::cout << "rsp.contrastE =  " << rsp.contrastE  << std::endl;
+        std::cout << "rsp.contrastSD = " << rsp.contrastSD << std::endl;
+        std::cout << "rsp.IDME =  " << rsp.IDME  << std::endl;
+        std::cout << "rsp.IDMSD = " << rsp.IDMSD << std::endl;
+        std::cout << "rsp.correlationE =  " << rsp.correlationE  << std::endl;
+        std::cout << "rsp.correlationSD = " << rsp.correlationSD << std::endl << std::endl;
+
+    }
+
+
+    /* calColorFeature
     ColorFeatureRsp rsp;
     CalculateFeature::calColorFeature("C:\\Users\\AC_Phoenix\\Desktop\\arborgreens\\Image01.jpg", rsp);
 
@@ -26,6 +48,7 @@ int main(int argc, char *argv[])
     std::cout << "rsp.LM1 = " << rsp.LM1 << std::endl;
     std::cout << "rsp.LM2 = " << rsp.LM2 << std::endl;
     std::cout << "rsp.LM3 = " << rsp.LM3 << std::endl;
+    */
 /*
     std::cout << "begin" << std::endl;
     QImage image;
